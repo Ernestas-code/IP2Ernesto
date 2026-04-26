@@ -2,7 +2,7 @@
 #include <fstream>
 #include "Set.h"
 #include <filesystem>
-using namespace myns;
+using namespace MyNS;
 
 // print helper
 void log(std::ostream& out, const std::string& message) {
@@ -54,7 +54,7 @@ int main() {
         try {
             Set s;
             s += 1;
-            s *= 100;
+            s *= std::make_pair(1, 100);
             log(file, (s[100]) ? "Test 4 PASS" : "Test 4 FAIL");
         } catch (...) {
             log(file, "Test 4 FAIL (exception)");

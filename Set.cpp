@@ -2,17 +2,18 @@
 #include <stdexcept>
 #include <sstream>
 
-namespace myns {
+namespace MyNS {
 class DuplicateException : public std::runtime_error {
 public:
     DuplicateException() : std::runtime_error("Duplicate") {}
 };
 
 class Set::Impl {
-public:
+private:
     int* data;
     int size;
     int capacity;
+public:
 
     Impl() : size(0), capacity(10) {
         data = new int[capacity];
@@ -20,6 +21,7 @@ public:
     ~Impl() {
         delete[] data;
     }
+    friend class Set;
 };
     Set::Set() {
         impl = new Impl();
@@ -67,13 +69,7 @@ public:
         }
         throw std::out_of_range("Value not found");
     }
-//update
-    Set& Set::operator*=(int value) {
-        if (impl->size == 0)
-            throw std::runtime_error("empty set");
-        impl->data[0] = value;
-        return *this;
-    }
+
 // search
     bool Set::operator[](int value) const {
         for (int i = 0; i < impl->size; i++)
@@ -92,11 +88,78 @@ public:
         return oss.str();
     }
     //comparison
-    bool Set::operator==(const Set& other) const { return impl->size == other.impl->size; }
-    bool Set::operator!=(const Set& other) const { return !(*this == other); }
-    bool Set::operator<(const Set& other) const { return impl->size < other.impl->size; }
-    bool Set::operator<=(const Set& other) const { return impl->size <= other.impl->size; }
-    bool Set::operator>(const Set& other) const { return impl->size > other.impl->size; }
-    bool Set::operator>=(const Set& other) const { return impl->size >= other.impl->size; }
+    bool Set::operator==(const Set& other) const {
+        if (impl->size != other.impl->size)
+            return false;
+
+        for (int i = 0; i < impl->size; i++) {
+            if (!other[impl->data[i]])
+                return false;
+        }
+
+        return true;
+    }
+
+    bool Set::operator!=(const Set& other) const {
+        return !(*this == other);
+    }
+
+    bool Set::operator<(const Set& other) const {
+        if (impl->size != other.impl->size)
+            return impl->size < other.impl->size;
+
+        for (int i = 0; i < impl->size; i++) {
+            if (impl->data[i] != other.impl->data[i])
+                return impl->data[i] < other.impl->data[i];
+        }
+
+        return false;
+    }
+
+    bool Set::operator<=(const Set& other) const {
+        return (*this < other) || (*this == other);
+    }
+
+    bool Set::operator>(const Set& other) const {
+        return !(*this <= other);
+    }
+
+    bool Set::operator>=(const Set& other) const {
+        return !(*this < other);
+    }
+
+    int Set::getSize() const {
+        return impl->size;
+    }
+
+    int Set::getAt(int index) const {
+        if (index < 0 || index >= impl->size)
+            throw std::out_of_range("Index out of range");
+
+        return impl->data[index];
+    }
+
+
+    Set& Set::operator*=(const std::pair<int, int>& values) {
+        int oldValue = values.first;
+        int newValue = values.second;
+
+        for (int i = 0; i < impl->size; i++) {
+            if (impl->data[i] == oldValue) {
+
+                // no dup
+                for (int j = 0; j < impl->size; j++) {
+                    if (impl->data[j] == newValue)
+                        throw DuplicateException();
+                }
+
+                impl->data[i] = newValue;
+                return *this;
+            }
+        }
+
+        throw std::out_of_range("Value not found");
+    }
+
 
 }

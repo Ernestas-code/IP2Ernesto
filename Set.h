@@ -2,8 +2,11 @@
 #define SET_H
 
 #include <string>
+#include <utility>
 
-namespace myns {
+
+
+namespace MyNS {
 
 class Set {
 private:
@@ -13,13 +16,14 @@ private:
 public:
         Set();
         ~Set();
+        Set& operator*=(const std::pair<int, int>& values);
+
         Set(const Set& other);
         Set& operator=(const Set& other);
 
 
         Set& operator+=(int value);
         Set& operator-=(int value);
-        Set& operator*=(int value);
 
         bool operator[](int value) const;
         void operator!();
@@ -31,6 +35,9 @@ public:
         bool operator<=(const Set& other) const;
         bool operator>(const Set& other) const;
         bool operator>=(const Set& other) const;
+
+        int getSize() const;
+        int getAt(int index) const;
     };
 
 }

@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Set.h"
 
-using namespace myns;
+using namespace MyNS;
 
 int main() {
     try {
